@@ -23,9 +23,7 @@ app.set('view engine', 'ejs');
 // use res.render to load up an ejs view file
 
 // index page 
-app.get('/', function (req, res) {
-    res.render('pages/index');
-});
+
 
 app.get('/about', function (req, res) {
     res.render('pages/about');
@@ -45,10 +43,10 @@ app.get('/class', function (req, res) {
     });
 })
 
-app.get('/animals', function (req, res) {
+app.get('/', function (req, res) {
     con.query('SELECT * FROM mmstats_2017', function (error, results, fields) {
         if (error) res.send(error)
-        else res.render('pages/animals', {
+        else res.render('pages/stats', {
             data: results,
         })
     });
