@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+</head>
+
+<body class="container">
+    <main>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">School</th>
+                    <th scope="col">Wins</th>
+                    <th scope="col">Losses</th>
+                </tr>
+            </thead>
+            <tbody id="statsDisplay">
+                <% for(var i=0; i<data.length; i++) { %>
+                <tr>
+                    <td>
+                        <%= data[i].Rk %>
+                    </td>
+                    <td>
+                        <%= data[i].School %>
+                    </td>
+                    <td>
+                        <%= data[i].W %>
+                    </td>
+                    <td>
+                        <%= data[i].L %>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning" data-id=<%=data[i].id %>>delete</button>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </main>
+    <script>alert('HELLO')</script>
+
+</body>
+
+</html>
