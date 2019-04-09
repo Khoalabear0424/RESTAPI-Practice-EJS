@@ -11,6 +11,7 @@ var con = mysql.createConnection({
     database: "march_madness_db"
 });
 
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
@@ -24,26 +25,26 @@ app.set('view engine', 'ejs');
 
 // index page 
 
+app.get('/', function (req, res) {
+    if (error) res.send(error)
+    else res.send('/index.html')
+})
 
-app.get('/about', function (req, res) {
-    res.render('pages/about');
-});
-
-app.get('/class', function (req, res) {
-    res.render('pages/class', {
-        data: [
-            { id: 1, name: 'rob' },
-            { id: 2, name: 'joe' },
-            { id: 3, name: 'nick' },
-            { id: 4, name: 'haven' },
-            { id: 5, name: 'sandy' }
-        ],
-
-        classroom: 507
+app.get('/home', function (req, res) {
+    con.query('SELECT * FROM mmstats_2017', function (error, results, fields) {
+        if (error) res.send(error)
+        else res.send('/home.html')
     });
 })
 
-app.get('/', function (req, res) {
+// app.get('/login', function (req, res) {
+//     con.query('SELECT * FROM mmstats_2017', function (error, results, fields) {
+//         if (error) res.send(error)
+//         else res.send('/home.html')
+//     });
+// })
+
+app.get('/game-stats', function (req, res) {
     con.query('SELECT * FROM mmstats_2017', function (error, results, fields) {
         if (error) res.send(error)
         else res.render('pages/stats', {
