@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
+var methodOverride = require('method-override')
 
 var con = mysql.createConnection({
     host: "localhost",
@@ -10,7 +11,7 @@ var con = mysql.createConnection({
     password: "password",
     database: "march_madness_db"
 });
-
+app.use(methodOverride('_method'))
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -18,12 +19,7 @@ app.use(express.static("public"));
 
 con.connect();
 
-// set the view engine to ejs
 app.set('view engine', 'ejs');
-
-// use res.render to load up an ejs view file
-
-// index page 
 
 app.get('/', function (req, res) {
     if (error) res.send(error)
@@ -37,12 +33,15 @@ app.get('/home', function (req, res) {
     });
 })
 
-// app.get('/login', function (req, res) {
-//     con.query('SELECT * FROM mmstats_2017', function (error, results, fields) {
-//         if (error) res.send(error)
-//         else res.send('/home.html')
-//     });
-// })
+//WORK ON LOGIN
+app.get('/login/:email/:password', function (req, res) {
+    console.log(req.params.email + req.params.password);
+    con.query('SELECT user_password FROM userLogin WHERE user_email = (?)', [req.params.email], function (error, results, fields) {
+        res.send('/home.html')
+        if (error) res.send(error)
+        else res.send('/home.html')
+    });
+})
 
 app.get('/game-stats', function (req, res) {
     con.query('SELECT * FROM mmstats_2017', function (error, results, fields) {

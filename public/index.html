@@ -50,22 +50,17 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
     <script>
-        $('form').submit(function (e) {
+        $('#login').submit(function (e) {
 
             e.preventDefault(); // avoid to execute the actual submit of the form.
             var email = $("#login input[id='inputEmail']").val();
             var password = $("#login input[id='inputPassword']").val();
 
-            alert(email + password);
-
-            // $.ajax({
-            //     url: '/actors-insert',
-            //     method: 'POST',
-            //     data: { actor_name: cn }
-            // }).then(function (message) {
-            //     getActors();
-            // });
-
+            $.ajax({
+                url: '/login/' + email + '/' + password,
+                method: 'GET',
+                data: { user_email: email }
+            });
         });</script>
 </body>
 
