@@ -37,9 +37,11 @@ app.get('/home', function (req, res) {
 app.get('/login/:email/:password', function (req, res) {
     console.log(req.params.email + req.params.password);
     con.query('SELECT user_password FROM userLogin WHERE user_email = (?)', [req.params.email], function (error, results, fields) {
-        res.send('/home.html')
         if (error) res.send(error)
-        else res.send('/home.html')
+        else {
+            res.json({ redirect: "/home.html" })
+            // res.redirect('/home.html')
+        }
     });
 })
 

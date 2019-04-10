@@ -60,6 +60,8 @@
                 url: '/login/' + email + '/' + password,
                 method: 'GET',
                 data: { user_email: email }
+            }).then(function (results) {
+                console.log(results)
             });
         });</script>
 </body>
