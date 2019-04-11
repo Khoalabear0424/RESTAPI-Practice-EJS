@@ -64,7 +64,10 @@ app.post('/login', function (req, res) {
                 if (result == true) {
                     req.session.user_id = results[0].id;
                     req.session.email = results[0].email;
-                    res.redirect('/home.html');
+                    var userData = [req.session.user_id, req.session.email];
+                    res.render('pages/home', {
+                        data: results,
+                    });
                 } else {
                     res.send('Wrong Password');
                 }
