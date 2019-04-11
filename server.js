@@ -3,10 +3,14 @@ var express = require('express');
 var app = express();
 var mysql = require('mysql');
 var bodyParser = require('body-parser');
-var methodOverride = require('method-override')
+var methodOverride = require('method-override');
+var bcrypt = require('bcrypt');
 
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var con = mysql.createConnection({
     host: "localhost",
+    port: 3306,
     user: "root",
     password: "password",
     database: "march_madness_db"
@@ -16,38 +20,62 @@ app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
+app.use(session({ secret: 'app', cookie: { maxAge: 1 * 1000 * 60 * 60 * 24 * 365 } }));
+app.use(cookieParser());
 
 con.connect();
 
 app.set('view engine', 'ejs');
 
 app.get('/', function (req, res) {
-    if (error) res.send(error)
+    if (err) res.send(err)
     else res.send('/index.html')
 })
 
 app.get('/home', function (req, res) {
-    con.query('SELECT * FROM mmstats_2017', function (error, results, fields) {
-        if (error) res.send(error)
+    con.query('SELECT * FROM mmstats_2017', function (err, results, fields) {
+        if (err) res.send(err)
         else res.send('/home.html')
     });
 })
 
-//WORK ON LOGIN
-app.get('/login/:email/:password', function (req, res) {
-    console.log(req.params.email + req.params.password);
-    con.query('SELECT user_password FROM userLogin WHERE user_email = (?)', [req.params.email], function (error, results, fields) {
-        if (error) res.send(error)
-        else {
-            res.json({ redirect: "/home.html" })
-            // res.redirect('/home.html')
+app.post('/signup', (req, res) => {
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(req.body.password, salt, (err, p_hash) => {
+            con.query('INSERT INTO userLogin (user_email, user_password) VALUES (?,?)', [req.body.email, p_hash], (err, results, fields) => {
+                if (err) {
+                    res.send(err);
+                } else {
+                    res.send('Success!')
+                }
+            })
+        })
+    })
+})
+
+app.post('/login', function (req, res) {
+    con.query('SELECT id, user_password FROM userLogin WHERE user_email = (?)', [req.body.email], (err, results, fields) => {
+        if (err) throw error;
+
+        if (results.length == 0) {
+            res.send('Try Again');
+        } else {
+            bcrypt.compare(req.body.password, results[0].user_password, (err, result) => {
+                if (result == true) {
+                    req.session.user_id = results[0].id;
+                    req.session.email = results[0].email;
+                    res.redirect('/home.html');
+                } else {
+                    res.send('Wrong Password');
+                }
+            })
         }
     });
 })
 
 app.get('/game-stats', function (req, res) {
-    con.query('SELECT * FROM mmstats_2017', function (error, results, fields) {
-        if (error) res.send(error)
+    con.query('SELECT * FROM mmstats_2017', function (err, results, fields) {
+        if (err) res.send(err)
         else res.render('pages/stats', {
             data: results,
         })
