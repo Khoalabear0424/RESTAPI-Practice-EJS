@@ -77,13 +77,23 @@ app.post('/login', function (req, res) {
 })
 
 app.get('/game-stats', function (req, res) {
-    con.query('SELECT * FROM mmstats_2017', function (err, results, fields) {
-        if (err) res.send(err)
-        else res.render('pages/stats', {
-            data: results,
-        })
-    });
+    if (req.session.user_id) {
+        con.query('SELECT * FROM mmstats_2017', function (err, results, fields) {
+            if (err) res.send(err)
+            else res.render('pages/stats', {
+                data: results,
+            })
+        });
+    } else {
+        res.send('You Need To Log In First')
+    }
 })
+
+app.get('/logout', function (req, res) {
+    req.session.destroy(function (err) {
+        res.send('you are logged out');
+    })
+});
 
 
 app.listen(3000, function () {
